@@ -24,10 +24,75 @@ cloned, retaining its own initial commit.
 
 ## Verification
 
-Reference environment: Linux x86_64, Node 24.19.0, npm 11.9.0.
+Reference environment: Linux 6.18.55 x86_64, Node **24.19.0**, npm **11.9.0**,
+verified on 2026-10-22. The foundation implementation is local commit `ddff274`;
+this report is a subsequent documentation-only update on `foundation/stage-00`.
 
-Initial dependency resolution/install passed. Full verification results will be
-recorded here after the checks finish; they are not claimed as passed yet.
+The fresh checkout had no `node_modules` or build output. A separate empty npm
+cache was used to exercise an actual lockfile install, not a reused dependency
+directory. Exact commands:
+
+```sh
+git clone --no-hardlinks --branch foundation/stage-00 /workspace/OrbiGuild /tmp/orbiguild-fresh-checkout
+cd /tmp/orbiguild-fresh-checkout
+NPM_CONFIG_CACHE=/tmp/orbiguild-npm-fresh-cache npm ci
+NPM_CONFIG_CACHE=/tmp/orbiguild-npm-fresh-cache npm run check
+git status --short
+```
+
+| Check | Result | Evidence |
+| --- | --- | --- |
+| Fresh `npm ci` | PASS | Installed from the committed lockfile; no manifest or lockfile changes |
+| `npm run lint` | PASS | ESLint completed with zero warnings |
+| `npm run typecheck` | PASS | All four workspaces, including test source |
+| `npm test` | PASS | 15 named behavior tests; 0 failures and 0 skips |
+| `npm run build` | PASS | Contracts/core declarations, compiled runner and Vite production assets |
+| `npm run docs:check` | PASS | Basic Markdown structure and 50 local links in 16 Markdown files |
+| `npm run check` | PASS | Entire sequence above in the fresh checkout |
+| `npm audit --audit-level=high` | PASS | Zero vulnerabilities after dependency cleanup |
+| `git diff --check` | PASS | No whitespace errors; fresh checkout remained clean |
+| Windows execution | NOT RUN | This execution environment is Linux; Windows CI is configured |
+| GitHub Actions execution | NOT RUN | No branch was pushed or remote workflow triggered |
+| External documentation URLs | NOT RUN | Local documentation checks intentionally do not fetch remote links |
+
+The test suite contains eight runner tests, two web tests, three contract tests
+and two core tests. It covers real HTTP/raw TCP health, IPv4/IPv6 loopback,
+port collisions, unsafe bind/port rejection, hostile/missing/duplicate Host,
+Origin/Fetch Metadata rejection, methods, payloads, queries, invalid HTTP,
+oversized headers, upgrades/CONNECT and continued health after rejection.
+Contracts reject incompatible versions, unknown fields and invented activity;
+web tests check semantic landmarks, empty-state copy, skip navigation and the
+HTML entry point.
+
+Additional manual checks passed:
+
+- `npm run dev` launched both processes at the documented addresses.
+  `curl --fail http://127.0.0.1:4319/health` returned the documented idle JSON;
+  a request with `Host: evil.example` returned 403 and `{"error":"forbidden"}`.
+- `node /tmp/orbiguild-browser-smoke.mjs` used the environment's preinstalled
+  Playwright and Chromium **154.0.8037.57**. The actual page rendered the exact
+  heading at 1280×900 and 375×812; keyboard skip navigation focused main; there
+  was no horizontal overflow, console error or request to runner/external hosts.
+  Screenshots were visually inspected. This environment-specific smoke helper is
+  not a repository dependency or a claim of automated browser CI coverage.
+- `node /tmp/orbiguild-cli-smoke.mjs` tested the compiled CLI: wildcard bind
+  rejected with exit 1; port zero selected a real loopback listener; health
+  validated; SIGTERM exited with code 0 and released the port. The temporary
+  helper used Node's HTTP client, consistent with the health-only policy.
+- All five GitHub workflow/configuration YAML files parsed successfully with the
+  environment's YAML parser. This is syntax validation, not a remote CI run.
+- A temporary Markdown file with an intentionally broken local link made the
+  documentation check exit 1. The probe was then removed.
+
+Initial failed attempts were resolved before the fresh-checkout pass: the tsx
+CLI hit sandbox IPC restrictions, so tests now use Node's runner plus the tsx
+loader with process isolation disabled and named assertions; the Markdown CLI
+introduced vulnerable transitive dependencies, so a small dependency-free check
+replaced it; the PR template needed a title; and a browser favicon 404 was fixed
+with a local SVG. A first CLI smoke probe using Node `fetch` was rejected by the
+deliberate Fetch Metadata policy; the plain HTTP client passed. No final
+verification failure remains. Socket tests/dev startup require network/listener
+permission in this managed sandbox; that permission was enabled for verification.
 
 ## Limitations and approval decisions
 
