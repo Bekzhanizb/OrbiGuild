@@ -1,0 +1,33 @@
+{
+  "name": "orbiguild",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "license": "MIT",
+  "engines": {
+    "node": ">=24.19.0 <25",
+    "npm": ">=11.9.0 <12"
+  },
+  "packageManager": "npm@11.9.0",
+  "workspaces": ["apps/*", "packages/*"],
+  "scripts": {
+    "build:shared": "npm run build -w @orbiguild/contracts && npm run build -w @orbiguild/core",
+    "dev": "npm run build:shared && concurrently --kill-others --names web,runner \"npm run dev -w @orbiguild/web\" \"npm run dev -w @orbiguild/runner\"",
+    "typecheck": "npm run build:shared && npm run typecheck --workspaces",
+    "lint": "eslint . --max-warnings 0",
+    "test": "npm run build:shared && npm run test --workspaces",
+    "build": "npm run build:shared && npm run build -w @orbiguild/runner && npm run build -w @orbiguild/web",
+    "docs:check": "node scripts/check-links.mjs",
+    "check": "npm run lint && npm run typecheck && npm test && npm run build && npm run docs:check"
+  },
+  "devDependencies": {
+    "@eslint/js": "10.0.1",
+    "@types/node": "24.19.2",
+    "concurrently": "10.0.6",
+    "eslint": "10.13.0",
+    "globals": "17.13.0",
+    "tsx": "4.23.15",
+    "typescript": "6.0.3",
+    "typescript-eslint": "8.72.0"
+  }
+}
