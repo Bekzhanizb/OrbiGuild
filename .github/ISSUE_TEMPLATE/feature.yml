@@ -1,0 +1,15 @@
+name: Feature proposal
+description: Propose a bounded improvement tied to the roadmap.
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem and proposed scope
+      description: Explain the need, roadmap stage and smallest useful change.
+    validations:
+      required: true
+  - type: textarea
+    id: boundary
+    attributes:
+      label: Trust boundary and validation
+      description: Describe permission, data or transport implications and how to verify behavior.

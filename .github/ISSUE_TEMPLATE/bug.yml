@@ -1,0 +1,19 @@
+name: Bug report
+description: Report reproducible behavior in an implemented feature.
+body:
+  - type: markdown
+    attributes:
+      value: Do not post secrets or vulnerability details. Use SECURITY.md for private reporting.
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Reproduction
+      description: Include revision, commands, expected and actual behavior; sanitize output.
+    validations:
+      required: true
+  - type: input
+    id: platform
+    attributes:
+      label: OS, Node and npm versions
+    validations:
+      required: true
