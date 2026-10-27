@@ -1,7 +1,7 @@
 # Security policy
 
-Only the current foundation branch is supported on a best-effort basis. This is
-early development software, with no production execution or authentication claim.
+The current development code is supported on a best-effort basis. Stage 01
+provides local status pairing; it is not a production execution service.
 There is no security response SLA.
 
 Do not disclose vulnerabilities or credentials in public issues. Use

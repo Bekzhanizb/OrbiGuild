@@ -1,6 +1,6 @@
 # Contributing to OrbiGuild
 
-OrbiGuild is in stage 00. Start with the [README](README.md),
+OrbiGuild is in Stage 01. Start with the [README](README.md),
 [product scope](docs/PRODUCT.md), [architecture](docs/ARCHITECTURE.md),
 [roadmap](docs/ROADMAP.md) and [AGENTS.md](AGENTS.md).
 

@@ -1,35 +1,19 @@
 # GitHub setup and publication
 
 The public repository [Bekzhanizb/OrbiGuild](https://github.com/Bekzhanizb/OrbiGuild)
-already exists with its own initial commit and MIT license. The foundation is
-prepared locally on `foundation/stage-00`. No repository creation, push, remote PR,
-merge, deployment or settings change is part of the local implementation.
-
-## Publish only with explicit push authorization
-
-After reviewing the local commit and receiving explicit authorization to push,
-these commands publish only the foundation branch and open a draft PR:
+already exists. Stage 00 is merged; Stage 01 uses
+`feature/stage-01-secure-local-connection`. Work on separate feature branches and
+open focused draft PRs after local verification. Push only when authorized; do
+not merge, deploy, publish packages or change repository settings without approval.
 
 ```sh
-git push --set-upstream origin foundation/stage-00
-gh pr create --repo Bekzhanizb/OrbiGuild --base main --head foundation/stage-00 --draft --title "Foundation: web shell and loopback runner health" --body-file docs/FOUNDATION_REPORT.md
+git push --set-upstream origin feature/stage-01-secure-local-connection
+gh pr create --repo Bekzhanizb/OrbiGuild --base main --head feature/stage-01-secure-local-connection --draft --title "Stage 01: secure local pairing and authenticated status" --body-file docs/STAGE_01_REPORT.md
 ```
 
-These commands have not been run. The GitHub CLI is optional for local development.
-Do not create a duplicate repository, import AgentNest, or push to AgentNest.
-Do not merge or deploy without separate approval. Root `private: true` and private
-workspace manifests also prevent accidental npm publication.
-
-If bootstrapping in a different account where OrbiGuild does not exist, explicitly
-select that owner first. Only then create the new public repository; do not run
-this against the existing repository:
-
-```sh
-gh repo create OWNER/OrbiGuild --public --description "Web-first AI agent workspace with a separately controlled local runner. Stage 00 foundation."
-```
-
-`OWNER` must be replaced deliberately. Repository creation does not authorize
-publishing source or copying another repository's history.
+The GitHub CLI is optional for development. Do not create a duplicate repository
+or import AgentNest. Private npm workspace manifests prevent accidental package
+publication. The [Stage 01 report](STAGE_01_REPORT.md) records verification and scope.
 
 ## Recommended settings (not applied)
 
@@ -50,7 +34,7 @@ publishing source or copying another repository's history.
   been configured to merge PRs, publish packages or deploy the site.
 
 Suggested description: **Web-first AI agent workspace with a separately controlled
-local runner. Stage 00 foundation.**
+local runner. Stage 01 secure local connection.**
 
 Suggested topics: `orbiguild`, `ai-agents`, `local-first`, `typescript`, `react`,
 `vite`, `npm-workspaces`, `open-source`. Avoid integration topics that suggest a

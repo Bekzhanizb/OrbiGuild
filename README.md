@@ -1,16 +1,16 @@
 # OrbiGuild
 
-**Foundation / No connected agents**
+**Stage 01 / Secure local connection**
 
 OrbiGuild is a new, public, MIT-licensed project for a web interface where people
 will create AI agents and observe real work in an interactive office. A separately
 controlled Local Runner will execute approved tasks on the user's own machine.
 Cloud storage will not mean cloud execution.
 
-Stage 00 implements a small foundation: a React/Vite shell, a read-only loopback
-runner health endpoint, validated shared contracts, tests, and CI configuration.
-There is no agent connection, task execution, provider integration, database,
-authentication, pairing, or office simulation yet. No API key or account is needed.
+Stage 01 adds explicit terminal-approved pairing between the local React/Vite app
+and Node Runner. A memory-only session grants read-only status for 15 minutes.
+There is no agent execution, provider integration, database or office simulation.
+No provider API key or account is needed.
 
 ## Get started
 
@@ -25,10 +25,15 @@ npm ci
 npm run dev
 ```
 
-Open **http://127.0.0.1:5173**. The page truthfully displays
-**Foundation / No connected agents**. The runner listens on
-**http://127.0.0.1:4319/health**. These processes are separate; the page does not
-contact the runner. Stop both with Ctrl+C. Ports fail closed if already in use.
+Open **http://127.0.0.1:5173** and choose **Pair with runner**. Compare the public
+verification code in the browser with the runner terminal, then type `approve CODE`
+in that terminal only if they match. The page shows **Connected** only after a real
+authenticated status check. **Disconnect** revokes the session; terminal `revoke`
+revokes all connections. See [pairing and recovery](docs/LOCAL_CONNECTION.md).
+
+The separate CLI health endpoint is **http://127.0.0.1:4319/health**. Its original
+foundation response remains compatible and does not indicate pairing or execution.
+Stop both processes with Ctrl+C. Ports fail closed if already in use.
 
 ```sh
 curl --fail http://127.0.0.1:4319/health
@@ -61,33 +66,31 @@ flowchart LR
   Core --> Contracts[Validated contracts v1]
   Runner[Local Node runner] --> Core
   Runner --> Contracts
+  Web -->|approved read-only session| Runner
   CLI[Local HTTP client] -->|GET /health on loopback| Runner
 ```
 
-There is deliberately no browser-to-runner connection in stage 00. The
-[architecture](docs/ARCHITECTURE.md) describes the future event flow and the
-[transport ADR](docs/adr/0001-local-first-web-and-runner.md) records the security
-conditions required before connecting them.
+[ADR 0002](docs/adr/0002-secure-local-pairing.md) defines local pairing, expiration,
+revocation and the security boundaries. Hosted browser access remains deferred.
 
 | Workspace | Current responsibility |
 | --- | --- |
-| `apps/web` | Accessible, static foundation screen; no Node imports or secrets |
-| `apps/runner` | Validated startup options and restricted read-only health API |
-| `packages/contracts` | Strict, versioned runner health/status schemas |
-| `packages/core` | Pure foundation status creation and presentation |
+| `apps/web` | Accessible real connection lifecycle and memory-only session |
+| `apps/runner` | Loopback health, terminal approval and authenticated read-only status |
+| `packages/contracts` | Strict versioned health, pairing and status schemas |
+| `packages/core` | Pure status helpers and connection labels |
 
-The runner accepts only literal `127.0.0.1` or `::1` bind addresses. It verifies
-the exact Host authority, rejects browser-origin requests, accepts no payloads,
-and sends no CORS grants. It has no command API. Loopback is not authentication;
-the current surface is suitable only for local health checks. See the
-[security model](docs/SECURITY.md) and [runner configuration](docs/DEVELOPMENT.md).
+The runner binds only literal loopback addresses. It verifies Host and Origin,
+limits request bodies/time/rate, and grants CORS only to the supported local origin.
+The legacy health endpoint keeps its browser rejection policy. No execution-capable
+endpoint exists. See [security](docs/SECURITY.md).
 
 ## Current scope and roadmap
 
 SQLite is the planned zero-configuration default for the initial useful release.
 The maintainer-preferred cloud option is a user-owned Supabase project with a
 publishable key, end-user Auth and RLS. Privileged keys never belong in the browser
-or runner. Neither database is implemented or connected in stage 00. Other SQL
+or runner. Neither database is implemented or connected in Stage 01. Other SQL
 databases and providers are future work.
 
 The [product definition](docs/PRODUCT.md) and [roadmap](docs/ROADMAP.md) keep the
@@ -103,7 +106,7 @@ Report vulnerabilities privately using [SECURITY.md](SECURITY.md), rather than
 posting credentials or exploit details in an issue.
 
 Public screenshots and recordings must follow the [demo policy](docs/DEMO_POLICY.md):
-show actual behavior, or visibly label fixture-based demonstrations. Stage 00 has
+show actual behavior, or visibly label fixture-based demonstrations. Stage 01 has
 no demo agents or simulated successful work.
 
 This repository has its own history. No AgentNest source, assets or history are
@@ -114,7 +117,7 @@ may inform later designs, subject to independent implementation and license revi
 Licensed under the existing [MIT license](LICENSE).
 
 Suggested repository description: **Web-first AI agent workspace with a separately
-controlled local runner. Stage 00 foundation.**
+controlled local runner. Stage 01 secure local connection.**
 
 Suggested topics: `orbiguild`, `ai-agents`, `local-first`, `typescript`, `react`,
 `vite`, `npm-workspaces`, `open-source`. Topics describe direction, not completed

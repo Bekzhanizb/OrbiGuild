@@ -1,6 +1,4 @@
-import { createFoundationStatus, describeFoundationStatus } from '@orbiguild/core';
-
-const statusLabel = describeFoundationStatus(createFoundationStatus());
+import { ConnectionPanel } from './ConnectionPanel.js';
 
 export function App() {
   return (
@@ -8,26 +6,16 @@ export function App() {
       <a className="skip-link" href="#main">Skip to content</a>
       <header className="site-header">
         <a className="wordmark" href="/" aria-label="OrbiGuild home">OrbiGuild</a>
-        <span className="stage">Stage 00</span>
+        <span className="stage">Stage 01</span>
       </header>
       <main id="main" tabIndex={-1}>
         <p className="eyebrow">A workspace for real work</p>
-        <h1>{statusLabel}</h1>
+        <h1>Secure local connection</h1>
         <p className="intro">
-          The foundation is here. Agent creation and an interactive office are planned
-          for future stages.
+          Connect to your Local Runner with your approval. This connection only
+          shows status; agent creation and execution remain future work.
         </p>
-        <section className="empty-state" aria-labelledby="connection-heading">
-          <span className="status-marker" aria-hidden="true" />
-          <div>
-            <h2 id="connection-heading">Your workspace is quiet</h2>
-            <p>No agents are connected and no tasks are running.</p>
-            <p>
-              The Local Runner has a separate health check. Connecting this web
-              interface to the runner is not implemented yet.
-            </p>
-          </div>
-        </section>
+        <ConnectionPanel />
         <p className="reassurance">No account, API key or database setup is needed.</p>
         <a className="project-link" href="https://github.com/Bekzhanizb/OrbiGuild">
           Read the project documentation <span aria-hidden="true">↗</span>

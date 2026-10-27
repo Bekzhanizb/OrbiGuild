@@ -3,12 +3,13 @@
 Read the [product definition](PRODUCT.md) and
 [ADR 0001](adr/0001-local-first-web-and-runner.md) before adding functionality.
 
-## Current foundation
+## Current local connection
 
 The npm monorepo has four workspaces. `contracts` is a browser-safe Zod schema
 package. `core` contains pure status creation and presentation. The web shell
 imports core without Node APIs. The Node runner imports core and contracts and
-exposes read-only health. No runtime connection exists between the web and runner.
+exposes health plus a terminal-approved read-only status API. The browser holds
+short-lived sessions only in memory. See [ADR 0002](adr/0002-secure-local-pairing.md).
 
 ```mermaid
 flowchart TD
@@ -16,6 +17,7 @@ flowchart TD
   Core --> Contracts[packages/contracts: Zod schemas v1]
   Runner[apps/runner: Node HTTP health] --> Core
   Runner --> Contracts
+  Web -->|terminal-approved session| Runner
   Client[Local HTTP client] -->|validated GET /health| Runner
 ```
 
@@ -44,7 +46,7 @@ OrbiGuild/
   .github/               CI, dependency hygiene, issue and PR templates
 ```
 
-Only contracts and core are package workspaces in stage 00. The future packages
+Only contracts and core are package workspaces in Stage 01. The future packages
 will be introduced with concrete consumers, tests and build scripts. There are no
 empty packages implying that these integrations already work.
 
@@ -62,8 +64,8 @@ flowchart LR
   Browser -->|validated view models| Office[PixiJS office]
 ```
 
-The browser/runner arrow is a future authenticated transport, not a current
-localhost fetch. The runner alone will access filesystem, Git, commands and
+The browser/runner arrow currently carries only authenticated local status.
+Provider, storage and office arrows remain future work. The runner alone will access filesystem, Git, commands and
 provider credentials. Provider adapters will expose start, cancel, event streaming
 and approval requests; callers must check each provider's capabilities. The office
 will deterministically render validated events or visibly labelled demo events,
@@ -71,24 +73,20 @@ and will never originate execution events.
 
 ## Transport boundary
 
-Stage 00 provides only `GET /health`. Startup accepts literal `127.0.0.1` or `::1`
-and a validated port; no DNS resolution or wildcard binding is allowed. Requests
-must come from loopback, use the exact configured Host authority and contain no
-Origin or Fetch Metadata headers. Payloads and query strings are rejected. The
-server does not grant CORS or accept arbitrary commands.
+The original `GET /health` keeps its CLI-only contract and browser rejection.
+Stage 01 adds versioned pairing and authenticated read-only status routes. Literal
+loopback binding and exact Host checks apply to every request. API Origin is fixed
+to `http://127.0.0.1:5173`; CORS never grants wildcard or cookie credentials.
 
-This unauthenticated, read-only health surface is not a secure execution channel.
-A later local MVP may accompany or serve a localhost web app with authenticated,
-narrow APIs, strict Origin/Host checks and CSRF protection. Binding to loopback
-alone does not stop malicious websites or other local processes. Hosted HTTPS UI
-to HTTP localhost is deferred: browser secure-context, local-network access,
-mixed-content and DNS-rebinding behavior vary. Future hosted use needs explicit
-user pairing over an outbound TLS connection/relay, short-lived credentials,
-revocation, consent and workspace scoping. See the ADR for the decision gate.
+Explicit terminal approval, one-time two-minute challenges, 15-minute memory-only
+sessions, cancellation, revocation and strict runtime validation are implemented.
+The browser polls real status every five seconds and discards credentials on
+failure. Hosted transport and all execution remain deferred. See the
+[protocol guide](LOCAL_CONNECTION.md) and [security model](SECURITY.md).
 
 ## Persistence decision
 
-No driver, schema, migration, project or database is created in stage 00.
+No driver, schema, migration, project or database is created in Stage 01.
 
 SQLite is the future zero-configuration baseline. The runner owns the local file,
 migrations and backups. The maintainer-preferred optional cloud mode is a user-owned

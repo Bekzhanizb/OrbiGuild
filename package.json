@@ -12,7 +12,7 @@
   "workspaces": ["apps/*", "packages/*"],
   "scripts": {
     "build:shared": "npm run build -w @orbiguild/contracts && npm run build -w @orbiguild/core",
-    "dev": "npm run build:shared && concurrently --kill-others --names web,runner \"npm run dev -w @orbiguild/web\" \"npm run dev -w @orbiguild/runner\"",
+    "dev": "npm run build:shared && concurrently --handle-input --default-input-target 1 --kill-others --names web,runner \"npm run dev -w @orbiguild/web\" \"npm run dev -w @orbiguild/runner\"",
     "typecheck": "npm run build:shared && npm run typecheck --workspaces",
     "lint": "eslint . --max-warnings 0",
     "test": "npm run build:shared && npm run test --workspaces",

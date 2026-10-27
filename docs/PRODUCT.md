@@ -7,18 +7,17 @@ and observe actual execution in an interactive office. A separately controlled
 Local Runner will own execution on the user's machine. A hosted UI and optional
 cloud persistence will never imply hosted execution.
 
-## Stage 00: Foundation
+## Stage 01: Secure local connection
 
-The only product screen is an accessible React/Vite shell saying
-**Foundation / No connected agents**. A separate Node runner offers a constrained,
-read-only loopback health endpoint. The browser does not connect to it. Shared
-contracts validate real health responses; pure core functions provide the initial
-status. CI, contributor guidance and security decisions make this reviewable.
+The web app pairs with the local runner after explicit approval in its terminal.
+It displays Connecting, Connected, Disconnected, Pairing Required and Error using
+actual protocol outcomes. Only authenticated read-only status is available.
+Challenges, sessions, cancellation, expiry and revocation live in memory.
+See [local connection](LOCAL_CONNECTION.md) for the supported development topology.
 
-No accounts, API keys or database setup are required. There are no agents,
-executions, provider calls, file operations, Git changes or storage operations
-available through the product. A running runner health check is not evidence of
-any AI activity.
+The original unauthenticated health response remains separate and compatible.
+There are no agents, executions, providers, databases, filesystem/shell/Git tools
+or office simulation. A healthy or connected runner never implies AI activity.
 
 ## Future capabilities
 
@@ -33,7 +32,7 @@ any AI activity.
   and verification step.
 
 These are plans, not current features. Codex is a prospective first adapter;
-provider integrations and direct PostgreSQL/MySQL support are outside stage 00.
+provider integrations and direct PostgreSQL/MySQL support are outside Stage 01.
 
 ## Trust and demonstration
 
@@ -47,10 +46,10 @@ Show real provenance for work. Fixture-driven examples must remain visibly
 labelled as demo data. See the [demo policy](DEMO_POLICY.md) and
 [security model](SECURITY.md).
 
-## Foundation acceptance
+## Current acceptance
 
 - A clean checkout installs and builds on documented Node/npm versions.
-- The web shell accurately shows no connected agents.
+- The web shell reports actual connection state after explicit approval, and zero agents.
 - Health works only at a validated loopback address; malformed input fails safely.
 - Tests cover validation, rejection behavior and truthful UI rendering.
 - Linux and Windows CI is reproducible; local verification is reported separately.

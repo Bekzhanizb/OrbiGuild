@@ -12,7 +12,8 @@
   "dependencies": {
     "@orbiguild/core": "0.0.0",
     "react": "19.3.1",
-    "react-dom": "19.3.1"
+    "react-dom": "19.3.1",
+    "@orbiguild/contracts": "0.0.0"
   },
   "devDependencies": {
     "@types/jsdom": "30.0.0",
