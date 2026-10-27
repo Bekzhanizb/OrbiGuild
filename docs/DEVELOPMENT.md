@@ -35,11 +35,11 @@ curl --fail http://127.0.0.1:4319/health
 ```
 
 Use `curl.exe` on Windows PowerShell. A browser address bar or cross-origin fetch
-may be rejected intentionally. The UI does not poll health. Ctrl+C stops both
+may be rejected intentionally. The UI polls authenticated status, never health. See [pairing](LOCAL_CONNECTION.md). Ctrl+C stops both
 processes. The runner handles SIGINT/SIGTERM and closes active connections. Port
 collisions fail instead of silently moving to a different port.
 
-Web and runner source are watched. Changes to shared packages require restarting
+Web source is watched; restart the runner manually after source changes. Changes to shared packages require restarting
 `npm run dev` to rebuild their `dist` exports. There is no multi-package watch
 orchestration beyond this small development script.
 
@@ -80,8 +80,9 @@ npm run dev -w @orbiguild/runner
 ```
 
 The process stays in the foreground. Never expose it with a proxy or port forward.
-It rejects payloads, non-GET methods, queries, hostile/missing/duplicate Host,
-browser Origin/Fetch Metadata and upgrades. Errors contain only a contract-defined
+The legacy health endpoint rejects payloads and browser requests. The Stage 01
+API supports only the fixed default IPv4 browser topology documented in
+[local connection](LOCAL_CONNECTION.md), with strict Origin/Host and JSON checks. Errors contain only a contract-defined
 code. See the [security model](SECURITY.md).
 
 ## Checks
@@ -103,5 +104,5 @@ disabled, avoiding tsx CLI IPC and ensuring named assertions run in this sandbox
 CI uses `ubuntu-latest` and `windows-latest` on the reference Node/npm versions.
 IPv6 tests skip only when the OS reports that loopback IPv6 is unavailable; other
 errors fail. A Linux result does not establish a Windows result. See
-[the foundation verification report](FOUNDATION_REPORT.md) for exact local checks
+[the Stage 01 verification report](STAGE_01_REPORT.md) for exact local checks
 and checks not performed. CI configuration is not evidence of a completed run.

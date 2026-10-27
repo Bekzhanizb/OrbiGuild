@@ -1,8 +1,9 @@
 # Demonstration policy
 
-Show real capabilities and actual provenance. Stage 00 may show the static web
-shell and a real runner health response. Neither demonstrates connected agents,
-AI execution, provider authorization or database activity.
+Show real capabilities and actual provenance. Stage 01 may show real local pairing and authenticated status, as well as a
+runner health response. These do not demonstrate connected agents, AI execution,
+provider authorization or database activity. Public comparison codes may be shown;
+secret challenges and session tokens must never appear in screenshots or recordings.
 
 Any future fixture-driven office, event replay, mock agent or example task must
 carry a persistent visible **Demo / Simulated data** label. Disclose the data

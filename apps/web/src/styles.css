@@ -28,3 +28,8 @@ h2 { font-size: 1.1rem; margin: 0 0 0.5rem; }
 .reassurance { font-size: 0.9rem; color: #c0cbde; }
 .project-link { display: inline-block; margin-top: 0.5rem; font-weight: 600; }
 footer { max-width: 76rem; margin: auto; padding: 1.5rem clamp(1rem, 5vw, 4rem); border-top: 1px solid #344155; color: #b4bfd0; font-size: 0.8rem; }
+
+.connection-actions { display: flex; flex-wrap: wrap; gap: 0.75rem; margin: 1rem 0; }
+button { font: inherit; padding: 0.5rem 1rem; border: 1px solid #a9c8ff; border-radius: 0.35rem; background: #243a59; color: #e8edf7; cursor: pointer; }
+button:disabled { opacity: 0.6; cursor: wait; }
+.verification-code { font-size: 1.3rem; font-weight: bold; letter-spacing: 0.1em; }

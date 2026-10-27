@@ -3,7 +3,7 @@
 Milestones describe planned scope, not delivered capabilities. No delivery dates
 or automatic promotion between stages are implied.
 
-## 00 — Foundation (this change)
+## 00 — Foundation (completed)
 
 - Four TypeScript npm workspaces and a committed root lockfile.
 - Accessible React/Vite empty state and a separate loopback health process.
@@ -13,12 +13,13 @@ or automatic promotion between stages are implied.
 
 Stage 00 ends here. There is no agent, database, provider or browser pairing.
 
-## 01 — Secure local connection
+## 01 — Secure local connection (implemented for review)
 
-Specify a versioned local-only authenticated handshake with a tiny status surface.
-Threat-model Host/Origin checks, CSRF, DNS rebinding, token handling, workspace
-scoping, cancellation of pairing and browser behavior. Keep health separate from
-capability grants. Add tests before any privileged route exists.
+Versioned local pairing now requires explicit runner-terminal approval. It uses
+strict Host/Origin checks, one-time challenges, bounded requests, memory-only
+sessions, expiry, cancellation and revocation. React displays real authenticated
+status and recovery states. Health remains separate; no execution capability exists.
+See [the protocol](LOCAL_CONNECTION.md). Hosted transport remains deferred.
 
 ## 02 — Local definitions and persistence
 

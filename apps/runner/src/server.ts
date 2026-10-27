@@ -2,6 +2,8 @@ import { createServer, type ServerResponse } from 'node:http';
 import { HealthErrorSchema, RunnerHealthSchema, type HealthError } from '@orbiguild/contracts';
 import { createFoundationStatus } from '@orbiguild/core';
 import { RunnerConfigSchema } from './config.js';
+import { PairingAuthority } from './pairing.js';
+import { createConnectionApi } from './connection-api.js';
 
 function sendJson(response: ServerResponse, status: number, value: unknown) {
   const body = JSON.stringify(value);
@@ -20,10 +22,11 @@ function sendError(response: ServerResponse, status: number, error: HealthError[
   sendJson(response, status, HealthErrorSchema.parse({ error }));
 }
 
-export async function startRunner(input: unknown = {}) {
+export async function startRunner(input: unknown = {}, pairing = new PairingAuthority()) {
   // Validate before opening a socket. No hostname resolution or public binding.
   const config = RunnerConfigSchema.parse(input);
   let authority = '';
+  const connectionApi = createConnectionApi(pairing);
   const server = createServer({
     maxHeaderSize: 8192,
     headersTimeout: 2000,
@@ -35,10 +38,15 @@ export async function startRunner(input: unknown = {}) {
       && (header.toLowerCase() === 'origin' || header.toLowerCase().startsWith('sec-fetch-')));
 
     if (request.socket.remoteAddress !== config.host || hostCount !== 1
-      || request.headers.host !== authority || hasBrowserHeaders) {
+      || request.headers.host !== authority) {
       sendError(response, 403, 'forbidden');
       return;
     }
+    if (request.url?.startsWith('/v1/')) {
+      void connectionApi(request, response);
+      return;
+    }
+    if (hasBrowserHeaders) { sendError(response, 403, 'forbidden'); return; }
     if (request.headers['transfer-encoding'] !== undefined
       || (request.headers['content-length'] !== undefined && request.headers['content-length'] !== '0')
       || !request.url?.startsWith('/') || request.url.includes('?') || request.url.includes('#')) {
@@ -89,6 +97,7 @@ export async function startRunner(input: unknown = {}) {
     port: address.port,
     url: `http://${authority}`,
     close: () => new Promise<void>((resolve, reject) => {
+      pairing.revokeAll();
       server.close((error) => error ? reject(error) : resolve());
       server.closeAllConnections();
     }),

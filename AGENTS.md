@@ -5,9 +5,11 @@ Read [README.md](README.md), [PRODUCT.md](docs/PRODUCT.md),
 editing implementation code. Keep changes within the current milestone.
 
 - Keep AgentNest entirely unchanged. Do not import its source, assets or history.
-- Stage 00 has no execution, provider, database, authentication or pairing feature.
+- Stage 01 adds only terminal-approved local pairing and read-only status.
+  There is no execution, provider, database or office feature.
   Do not introduce fake activity, empty feature packages or Electron-only code.
-- Keep browser/core/contracts source free of Node APIs and credentials. Validate
+- Keep browser/core/contracts source free of Node APIs and provider secrets.
+  Local session credentials may exist only in browser memory. Validate
   unknown data at transport and configuration boundaries with shared schemas.
 - Keep the health API read-only, bound to literal loopback addresses, with strict
   Host checks and browser-origin rejection. Do not add permissive CORS or tools.
